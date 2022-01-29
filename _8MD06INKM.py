@@ -48,23 +48,44 @@ class _8MD06INKM():
         data_list = bytearray(1)
         data_list[0]=self.__msb_to_lsb(command)
         self.spi.write(data_list)
-        time.sleep_ms(10)
+        time.sleep_ms(1)
         data_list[0]=self.__msb_to_lsb(data)
         self.spi.write(data_list)
-        time.sleep_ms(5)
+        time.sleep_ms(1)
         self.cs_pin.value(1)
 
     def __send_data(self, data):
         data_list = bytearray(1)
         data_list[0]=self.__msb_to_lsb(data)
         self.spi.write(data_list)
-
+    
+    def __write_customize_to_ram(self, data_list):
+        self.cs_pin.value(0)
+        # only use first customize ram
+        self.__send_data(0x40 + 0x00)
+        time.sleep_ms(1)
+        self.__send_data(data_list[0])
+        time.sleep_ms(1)
+        self.__send_data(data_list[1])
+        time.sleep_ms(1)
+        self.__send_data(data_list[2])
+        time.sleep_ms(1)
+        self.__send_data(data_list[3])
+        time.sleep_ms(1)
+        self.__send_data(data_list[4])
+        self.cs_pin.value(1)
+    
+    #one zone is 5*7, bits_list size is 5, and use first 7 bit(LSB) in all of the 8 bit
+    def print_bits(self, position, bits_list):
+        self.__write_customize_to_ram(bits_list)
+        self.print_code(position, 0x00)
+    
     def print_char(self, position, char):
         self.print_code(position, ord(char))
 
     def print_code(self, position, code):
         self.cs_pin.value(0)
         self.__send_data(0x20 + position)
-        time.sleep_ms(10)
+        time.sleep_ms(1)
         self.__send_data(code);
         self.cs_pin.value(1)

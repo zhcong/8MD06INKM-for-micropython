@@ -19,12 +19,13 @@ display.hv_off()
 time.sleep(1)
 display.hv_on()
 
+def print_all(chars):
+    for i in range(8):
+        if type(chars[i]) == int:
+            display.code(i, chars[i])
+        else:
+            display.print_char(i,chars[i])
+print_all('Hello-  ')
 
-display.print_code(0,0x0a)
-display.print_char(1,'h')
-display.print_char(2,'e')
-display.print_char(3,'l')
-display.print_char(4,'l')
-display.print_char(5,'o')
-display.print_char(6,'!')
-display.print_code(7,0x0b)
+bits=[0xff,0x41,0x41,0x41,0xff]
+display.print_bits(7, bits);
